@@ -16,6 +16,20 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         setupUI()
+        testLoggingSystem()
+    }
+    
+    private func testLoggingSystem() {
+        print("🧪 ViewController: Testing logging system...")
+        
+        // Subscribe to rate updates and log them
+        bitcoinService.ratePublisher
+            .sink { rate in
+                print("🧪 ViewController: Logged rate update: $\(String(format: "%.2f", rate))")
+            }
+            .store(in: &cancellables)
+        
+        print("🧪 ViewController: Logging system test complete")
     }
     
     private func setupUI() {

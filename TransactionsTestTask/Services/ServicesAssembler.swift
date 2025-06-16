@@ -4,6 +4,9 @@
 //
 //
 
+import Foundation
+import Combine
+
 /// Services Assembler is used for Dependency Injection
 /// There is an example of a _bad_ services relationship built on `onRateUpdate` callback
 /// This kind of relationship must be refactored with a more convenient and reliable approach
@@ -16,16 +19,11 @@ enum ServicesAssembler {
     // MARK: - BitcoinRateService
     
     static let bitcoinRateService: PerformOnce<BitcoinRateService> = {
-        lazy var analyticsService = Self.analyticsService()
+        let apiKey = "ed001fae24a74737266cda1710af78e0625cd55f1f3780887c05c528278d9fa6"
+        let service = BitcoinRateServiceImpl(apiKey: apiKey)
         
-        let service = BitcoinRateServiceImpl()
-        
-        service.onRateUpdate = {
-            analyticsService.trackEvent(
-                name: "bitcoin_rate_update",
-                parameters: ["rate": String(format: "%.2f", $0)]
-            )
-        }
+        // Start periodic fetching
+        service.startPeriodicFetch()
         
         return { service }
     }()

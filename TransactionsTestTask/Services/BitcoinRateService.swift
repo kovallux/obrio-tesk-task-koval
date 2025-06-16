@@ -14,7 +14,9 @@ import Combine
 /// The service should be covered by unit tests
 protocol BitcoinRateService: AnyObject {
     var ratePublisher: AnyPublisher<Double, Never> { get }
+    var currentBitcoinRate: Double { get }
     func fetchRate() -> AnyPublisher<Double, Error>
+    func fetchBitcoinRatePublisher() -> AnyPublisher<Double, Error>
     func startPeriodicFetch()
     func stopPeriodicFetch()
 }
@@ -35,6 +37,10 @@ final class BitcoinRateServiceImpl: BitcoinRateService {
         $currentRate
             .filter { $0 > 0 }
             .eraseToAnyPublisher()
+    }
+    
+    var currentBitcoinRate: Double {
+        return currentRate
     }
     
     // MARK: - Init
@@ -97,6 +103,10 @@ final class BitcoinRateServiceImpl: BitcoinRateService {
                 }
             }
             .eraseToAnyPublisher()
+    }
+    
+    func fetchBitcoinRatePublisher() -> AnyPublisher<Double, Error> {
+        return fetchRate()
     }
     
     // MARK: - Periodic Fetch

@@ -12,6 +12,8 @@ protocol TransactionRepositoryProtocol {
     func save(_ transaction: Transaction) throws
     func fetchTransactions(page: Int, pageSize: Int) throws -> [Transaction]
     func fetchAllTransactions() throws -> [Transaction]
+    func fetchTransactionsGroupedByDay() throws -> [String: [Transaction]]
+    func getTotalBalance() throws -> Double
 }
 
 final class TransactionRepository: TransactionRepositoryProtocol {
@@ -93,8 +95,8 @@ final class TransactionRepository: TransactionRepositoryProtocol {
 
 extension TransactionRepository {
     
-    func fetchTransactionsGroupedByDay(page: Int, pageSize: Int) throws -> [String: [Transaction]] {
-        let transactions = try fetchTransactions(page: page, pageSize: pageSize)
+    func fetchTransactionsGroupedByDay() throws -> [String: [Transaction]] {
+        let transactions = try fetchAllTransactions()
         
         let grouped = Dictionary(grouping: transactions) { transaction in
             transaction.dayKey

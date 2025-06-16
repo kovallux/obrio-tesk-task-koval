@@ -20,6 +20,13 @@
 		1CA3B6622D22B0F600176711 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B6612D22B0F600176711 /* Assets.xcassets */; };
 		1CA3B6652D22B0F600176711 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B6642D22B0F600176711 /* Base */; };
 		1CA3B6702D22B0F600176711 /* TransactionsTestTaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA3B66F2D22B0F600176711 /* TransactionsTestTaskTests.swift */; };
+		6DBD29262E0012C9007295D2 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD291D2E0012C9007295D2 /* CoreDataStack.swift */; };
+		6DBD29272E0012C9007295D2 /* BitcoinRateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD291F2E0012C9007295D2 /* BitcoinRateService.swift */; };
+		6DBD29282E0012C9007295D2 /* AnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD29212E0012C9007295D2 /* AnalyticsEvent.swift */; };
+		6DBD29292E0012C9007295D2 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD29222E0012C9007295D2 /* AnalyticsService.swift */; };
+		6DBD292A2E0012C9007295D2 /* ServicesAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD29232E0012C9007295D2 /* ServicesAssembler.swift */; };
+		6DBD292B2E0012C9007295D2 /* PerformOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD29252E0012C9007295D2 /* PerformOnce.swift */; };
+		6DBD292E2E0018DA007295D2 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD291D2E0012C9007295D2 /* CoreDataStack.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +64,12 @@
 		1CA3B66B2D22B0F600176711 /* TransactionsTestTaskTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TransactionsTestTaskTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CA3B66F2D22B0F600176711 /* TransactionsTestTaskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsTestTaskTests.swift; sourceTree = "<group>"; };
 		1CA3B6752D22B0F600176711 /* TransactionsTestTaskUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TransactionsTestTaskUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6DBD291D2E0012C9007295D2 /* CoreDataStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
+		6DBD291F2E0012C9007295D2 /* BitcoinRateService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BitcoinRateService.swift; sourceTree = "<group>"; };
+		6DBD29212E0012C9007295D2 /* AnalyticsEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsEvent.swift; sourceTree = "<group>"; };
+		6DBD29222E0012C9007295D2 /* AnalyticsService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
+		6DBD29232E0012C9007295D2 /* ServicesAssembler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServicesAssembler.swift; sourceTree = "<group>"; };
+		6DBD29252E0012C9007295D2 /* PerformOnce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerformOnce.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +148,8 @@
 			isa = PBXGroup;
 			children = (
 				0DF1D13E2D22DC2D001626E7 /* Services */,
+				6DBD291B2E0012C9007295D2 /* Data */,
+				6DBD291E2E0012C9007295D2 /* Services */,
 				1CA3B6552D22B0F500176711 /* AppDelegate.swift */,
 				1CA3B6572D22B0F500176711 /* SceneDelegate.swift */,
 				1CA3B6592D22B0F500176711 /* ViewController.swift */,
@@ -153,6 +168,50 @@
 				1CA3B66F2D22B0F600176711 /* TransactionsTestTaskTests.swift */,
 			);
 			path = TransactionsTestTaskTests;
+			sourceTree = "<group>";
+		};
+		6DBD291B2E0012C9007295D2 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				6DBD291C2E0012C9007295D2 /* CoreData */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		6DBD291C2E0012C9007295D2 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				6DBD291D2E0012C9007295D2 /* CoreDataStack.swift */,
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
+		6DBD291E2E0012C9007295D2 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				6DBD291F2E0012C9007295D2 /* BitcoinRateService.swift */,
+				6DBD29202E0012C9007295D2 /* AnalyticsService */,
+				6DBD29232E0012C9007295D2 /* ServicesAssembler.swift */,
+				6DBD29242E0012C9007295D2 /* Helpers */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		6DBD29202E0012C9007295D2 /* AnalyticsService */ = {
+			isa = PBXGroup;
+			children = (
+				6DBD29212E0012C9007295D2 /* AnalyticsEvent.swift */,
+				6DBD29222E0012C9007295D2 /* AnalyticsService.swift */,
+			);
+			path = AnalyticsService;
+			sourceTree = "<group>";
+		};
+		6DBD29242E0012C9007295D2 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6DBD29252E0012C9007295D2 /* PerformOnce.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -287,12 +346,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				0D1540612D22EF5D00D6D63F /* AnalyticsEvent.swift in Sources */,
+				6DBD29292E0012C9007295D2 /* AnalyticsService.swift in Sources */,
+				6DBD292A2E0012C9007295D2 /* ServicesAssembler.swift in Sources */,
 				0DF1D1432D22DCD8001626E7 /* PerformOnce.swift in Sources */,
+				6DBD29272E0012C9007295D2 /* BitcoinRateService.swift in Sources */,
 				0DF1D1452D22DD06001626E7 /* BitcoinRateService.swift in Sources */,
 				0DF1D1472D22DD4A001626E7 /* AnalyticsService.swift in Sources */,
 				1CA3B65A2D22B0F500176711 /* ViewController.swift in Sources */,
+				6DBD29262E0012C9007295D2 /* CoreDataStack.swift in Sources */,
+				6DBD292B2E0012C9007295D2 /* PerformOnce.swift in Sources */,
 				1CA3B6562D22B0F500176711 /* AppDelegate.swift in Sources */,
 				1CA3B6582D22B0F500176711 /* SceneDelegate.swift in Sources */,
+				6DBD29282E0012C9007295D2 /* AnalyticsEvent.swift in Sources */,
 				1CA3B6602D22B0F500176711 /* TransactionsTestTask.xcdatamodeld in Sources */,
 				0DF1D1402D22DC51001626E7 /* ServicesAssembler.swift in Sources */,
 			);
@@ -303,6 +368,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1CA3B6702D22B0F600176711 /* TransactionsTestTaskTests.swift in Sources */,
+				6DBD292E2E0018DA007295D2 /* CoreDataStack.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,6 +540,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NGGLF95RDQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TransactionsTestTask/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -481,6 +548,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -501,6 +569,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NGGLF95RDQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TransactionsTestTask/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -508,6 +577,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

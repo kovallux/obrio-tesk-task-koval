@@ -10,13 +10,17 @@
 		0DF1D1452D22DD06001626E7 /* BitcoinRateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DF1D1442D22DCFF001626E7 /* BitcoinRateService.swift */; };
 		1CA3B6562D22B0F500176711 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA3B6552D22B0F500176711 /* AppDelegate.swift */; };
 		1CA3B6582D22B0F500176711 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA3B6572D22B0F500176711 /* SceneDelegate.swift */; };
-		1CA3B65D2D22B0F500176711 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B65C2D22B0F500176711 /* Base */; };
 		1CA3B6602D22B0F500176711 /* TransactionsTestTask.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1CA3B65E2D22B0F500176711 /* TransactionsTestTask.xcdatamodeld */; };
 		1CA3B6622D22B0F600176711 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B6612D22B0F600176711 /* Assets.xcassets */; };
 		1CA3B6652D22B0F600176711 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B6642D22B0F600176711 /* Base */; };
 		1CA3B6702D22B0F600176711 /* TransactionsTestTaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA3B66F2D22B0F600176711 /* TransactionsTestTaskTests.swift */; };
 		2C99C8075CB54EA88DBF2C7A /* TransactionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99908FF8BACE47F4B59460FF /* TransactionRepository.swift */; };
 		6DACD0FB2E01FBB70003C05E /* TransactionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99908FF8BACE47F4B59460FF /* TransactionRepository.swift */; };
+		6DACD1012E0210EB0003C05E /* ServicesAssemblerTests.swift in Resources */ = {isa = PBXBuildFile; fileRef = 6DACD0FC2E0210EB0003C05E /* ServicesAssemblerTests.swift */; };
+		6DACD1022E0210EB0003C05E /* CoreDataStackTests.swift in Resources */ = {isa = PBXBuildFile; fileRef = 6DACD0FD2E0210EB0003C05E /* CoreDataStackTests.swift */; };
+		6DACD1032E0210EB0003C05E /* DashboardViewModelTests.swift in Resources */ = {isa = PBXBuildFile; fileRef = 6DACD0FE2E0210EB0003C05E /* DashboardViewModelTests.swift */; };
+		6DACD1042E0210EB0003C05E /* StatisticsViewModelTests.swift in Resources */ = {isa = PBXBuildFile; fileRef = 6DACD0FF2E0210EB0003C05E /* StatisticsViewModelTests.swift */; };
+		6DACD1052E0210EB0003C05E /* AddTransactionViewModelTests.swift in Resources */ = {isa = PBXBuildFile; fileRef = 6DACD1002E0210EB0003C05E /* AddTransactionViewModelTests.swift */; };
 		6DBD29262E0012C9007295D2 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD291D2E0012C9007295D2 /* CoreDataStack.swift */; };
 		6DBD292E2E0018DA007295D2 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD291D2E0012C9007295D2 /* CoreDataStack.swift */; };
 		6DBD29352E001AAE007295D2 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD29342E001AAE007295D2 /* Transaction.swift */; };
@@ -61,7 +65,6 @@
 		1CA3B6522D22B0F500176711 /* TransactionsTestTask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TransactionsTestTask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CA3B6552D22B0F500176711 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1CA3B6572D22B0F500176711 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		1CA3B65C2D22B0F500176711 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1CA3B65F2D22B0F500176711 /* TransactionsTestTask.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TransactionsTestTask.xcdatamodel; sourceTree = "<group>"; };
 		1CA3B6612D22B0F600176711 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1CA3B6642D22B0F600176711 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -69,6 +72,11 @@
 		1CA3B66B2D22B0F600176711 /* TransactionsTestTaskTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TransactionsTestTaskTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CA3B66F2D22B0F600176711 /* TransactionsTestTaskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsTestTaskTests.swift; sourceTree = "<group>"; };
 		1CA3B6752D22B0F600176711 /* TransactionsTestTaskUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TransactionsTestTaskUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6DACD0FC2E0210EB0003C05E /* ServicesAssemblerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServicesAssemblerTests.swift; sourceTree = "<group>"; };
+		6DACD0FD2E0210EB0003C05E /* CoreDataStackTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStackTests.swift; sourceTree = "<group>"; };
+		6DACD0FE2E0210EB0003C05E /* DashboardViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardViewModelTests.swift; sourceTree = "<group>"; };
+		6DACD0FF2E0210EB0003C05E /* StatisticsViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsViewModelTests.swift; sourceTree = "<group>"; };
+		6DACD1002E0210EB0003C05E /* AddTransactionViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddTransactionViewModelTests.swift; sourceTree = "<group>"; };
 		6DBD291D2E0012C9007295D2 /* CoreDataStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		6DBD29342E001AAE007295D2 /* Transaction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		6DBD29382E001AAF007295D2 /* TransactionStatistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionStatistics.swift; sourceTree = "<group>"; };
@@ -149,7 +157,6 @@
 				6DBD291B2E0012C9007295D2 /* Data */,
 				1CA3B6552D22B0F500176711 /* AppDelegate.swift */,
 				1CA3B6572D22B0F500176711 /* SceneDelegate.swift */,
-				1CA3B65B2D22B0F500176711 /* Main.storyboard */,
 				1CA3B6612D22B0F600176711 /* Assets.xcassets */,
 				1CA3B6632D22B0F600176711 /* LaunchScreen.storyboard */,
 				1CA3B6662D22B0F600176711 /* Info.plist */,
@@ -161,6 +168,11 @@
 		1CA3B66E2D22B0F600176711 /* TransactionsTestTaskTests */ = {
 			isa = PBXGroup;
 			children = (
+				6DACD1002E0210EB0003C05E /* AddTransactionViewModelTests.swift */,
+				6DACD0FD2E0210EB0003C05E /* CoreDataStackTests.swift */,
+				6DACD0FE2E0210EB0003C05E /* DashboardViewModelTests.swift */,
+				6DACD0FC2E0210EB0003C05E /* ServicesAssemblerTests.swift */,
+				6DACD0FF2E0210EB0003C05E /* StatisticsViewModelTests.swift */,
 				1CA3B66F2D22B0F600176711 /* TransactionsTestTaskTests.swift */,
 			);
 			path = TransactionsTestTaskTests;
@@ -382,7 +394,6 @@
 			files = (
 				1CA3B6622D22B0F600176711 /* Assets.xcassets in Resources */,
 				1CA3B6652D22B0F600176711 /* Base in Resources */,
-				1CA3B65D2D22B0F500176711 /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,6 +401,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6DACD1022E0210EB0003C05E /* CoreDataStackTests.swift in Resources */,
+				6DACD1052E0210EB0003C05E /* AddTransactionViewModelTests.swift in Resources */,
+				6DACD1012E0210EB0003C05E /* ServicesAssemblerTests.swift in Resources */,
+				6DACD1042E0210EB0003C05E /* StatisticsViewModelTests.swift in Resources */,
+				6DACD1032E0210EB0003C05E /* DashboardViewModelTests.swift in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,14 +483,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		1CA3B65B2D22B0F500176711 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				1CA3B65C2D22B0F500176711 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		1CA3B6632D22B0F600176711 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

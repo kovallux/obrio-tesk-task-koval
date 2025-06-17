@@ -7,222 +7,189 @@
 import Foundation
 import Combine
 
-/// Rate Service fetches Bitcoin price from CoinCap API 3.0
-/// Fetching should be scheduled with dynamic update interval
-/// Rate should be cached for the offline mode
-/// Every successful fetch should be logged with analytics service
-/// The service should be covered by unit tests
-protocol BitcoinRateService: AnyObject {
-    var ratePublisher: AnyPublisher<Double, Never> { get }
-    var currentBitcoinRate: Double { get }
-    func fetchRate() -> AnyPublisher<Double, Error>
-    func fetchBitcoinRatePublisher() -> AnyPublisher<Double, Error>
-    func startPeriodicFetch()
-    func stopPeriodicFetch()
-}
-
-final class BitcoinRateServiceImpl: BitcoinRateService {
+class BitcoinRateService: ObservableObject {
+    static let shared = BitcoinRateService()
     
-    // MARK: - Properties
+    @Published var currentRate: Double = 0.0
+    @Published var isLoading: Bool = false
+    @Published var lastError: String?
     
-    private let apiKey: String
-    private let session: URLSession
-    private let baseURL = "https://rest.coincap.io/v3"
+    private var timer: Timer?
+    private let cacheKey = "cached_bitcoin_rate"
+    private let cacheTimestampKey = "cached_bitcoin_rate_timestamp"
+    private let cacheExpirationInterval: TimeInterval = 3600 // 1 hour
     
-    @Published private var currentRate: Double = 0.0
-    private var cancellables = Set<AnyCancellable>()
-    private var fetchTimer: Timer?
-    
-    var ratePublisher: AnyPublisher<Double, Never> {
-        $currentRate
-            .filter { $0 > 0 }
-            .eraseToAnyPublisher()
+    private init() {
+        print("BitcoinRateService: Initializing...")
+        loadCachedRate()
+        startPeriodicFetch()
+        fetchBitcoinRate() // Initial fetch
     }
     
-    var currentBitcoinRate: Double {
-        return currentRate
+    deinit {
+        stopPeriodicFetch()
     }
-    
-    // MARK: - Init
-    
-    init(apiKey: String, session: URLSession = URLSession.shared) {
-        self.apiKey = apiKey
-        self.session = session
-        
-        // Load cached rate on initialization
-        if let cachedRate = loadCachedRate() {
-            self.currentRate = cachedRate
-        }
-        
-        print("BitcoinRateService: Initialized with API key")
-    }
-    
-    // MARK: - Fetch Rate
-    
-    func fetchRate() -> AnyPublisher<Double, Error> {
-        guard let url = URL(string: "\(baseURL)/assets/bitcoin?apiKey=\(apiKey)") else {
-            print("BitcoinRateService: Invalid URL")
-            return Fail(error: BitcoinRateError.invalidURL)
-                .eraseToAnyPublisher()
-        }
-        
-        print("BitcoinRateService: Fetching rate from CoinCap API...")
-        
-        return session.dataTaskPublisher(for: url)
-            .map(\.data)
-            .decode(type: CoinCapResponse.self, decoder: JSONDecoder())
-            .tryMap { response in
-                guard let priceString = response.data.priceUsd,
-                      let price = Double(priceString) else {
-                    throw BitcoinRateError.invalidResponse
-                }
-                return price
-            }
-            .handleEvents(
-                receiveOutput: { [weak self] rate in
-                    print("BitcoinRateService: Successfully fetched rate: $\(String(format: "%.2f", rate))")
-                    self?.currentRate = rate
-                    self?.cacheRate(rate)
-                },
-                receiveCompletion: { completion in
-                    if case .failure(let error) = completion {
-                        print("BitcoinRateService: Failed to fetch rate - Error: \(error)")
-                    }
-                }
-            )
-            .catch { [weak self] error -> AnyPublisher<Double, Error> in
-                print("BitcoinRateService: Network request failed, trying cached rate...")
-                if let cachedRate = self?.loadCachedRate() {
-                    self?.currentRate = cachedRate
-                    return Just(cachedRate)
-                        .setFailureType(to: Error.self)
-                        .eraseToAnyPublisher()
-                } else {
-                    return Fail(error: error)
-                        .eraseToAnyPublisher()
-                }
-            }
-            .eraseToAnyPublisher()
-    }
-    
-    func fetchBitcoinRatePublisher() -> AnyPublisher<Double, Error> {
-        return fetchRate()
-    }
-    
-    // MARK: - Periodic Fetch
     
     func startPeriodicFetch() {
         print("BitcoinRateService: Starting periodic fetch every 3 minutes")
+        stopPeriodicFetch() // Stop any existing timer
         
-        // Initial fetch
-        fetchRate()
-            .sink(
-                receiveCompletion: { _ in },
-                receiveValue: { _ in }
-            )
-            .store(in: &cancellables)
-        
-        // Schedule periodic fetch every 3 minutes (180 seconds)
-        fetchTimer = Timer.scheduledTimer(withTimeInterval: 180, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
-            self.fetchRate()
-                .sink(
-                    receiveCompletion: { _ in },
-                    receiveValue: { _ in }
-                )
-                .store(in: &self.cancellables)
+        timer = Timer.scheduledTimer(withTimeInterval: 180, repeats: true) { [weak self] _ in
+            self?.fetchBitcoinRate()
         }
     }
     
     func stopPeriodicFetch() {
         print("BitcoinRateService: Stopping periodic fetch")
-        fetchTimer?.invalidate()
-        fetchTimer = nil
-        cancellables.removeAll()
+        timer?.invalidate()
+        timer = nil
     }
     
-    // MARK: - Caching
+    func fetchBitcoinRate() {
+        print("BitcoinRateService: Fetching Bitcoin rate...")
+        isLoading = true
+        lastError = nil
+        
+        // Use CoinGecko API - free and reliable
+        guard let url = URL(string: "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd") else {
+            print("BitcoinRateService: ❌ Invalid URL")
+            handleError("Invalid API URL")
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 30
+        
+        print("BitcoinRateService: 📡 Making API request to CoinGecko...")
+        
+        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+            }
+            
+            if let error = error {
+                print("BitcoinRateService: ❌ Network error: \(error.localizedDescription)")
+                self?.handleError("Network error: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print("BitcoinRateService: ❌ Invalid response type")
+                self?.handleError("Invalid response")
+                return
+            }
+            
+            print("BitcoinRateService: 📊 HTTP Status Code: \(httpResponse.statusCode)")
+            
+            guard httpResponse.statusCode == 200 else {
+                print("BitcoinRateService: ❌ HTTP Error: \(httpResponse.statusCode)")
+                if let data = data, let responseString = String(data: data, encoding: .utf8) {
+                    print("BitcoinRateService: Response body: \(responseString)")
+                }
+                self?.handleError("HTTP Error: \(httpResponse.statusCode)")
+                return
+            }
+            
+            guard let data = data else {
+                print("BitcoinRateService: ❌ No data received")
+                self?.handleError("No data received")
+                return
+            }
+            
+            print("BitcoinRateService: 📦 Received \(data.count) bytes of data")
+            
+            do {
+                let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                print("BitcoinRateService: ✅ JSON parsed successfully")
+                
+                if let bitcoin = json?["bitcoin"] as? [String: Any],
+                   let price = bitcoin["usd"] as? Double {
+                    
+                    print("BitcoinRateService: ✅ Bitcoin price successfully extracted: $\(price)")
+                    
+                    DispatchQueue.main.async {
+                        self?.currentRate = price
+                        self?.lastError = nil
+                    }
+                    
+                    // Cache the rate
+                    self?.cacheRate(price)
+                    
+                    print("BitcoinRateService: 🎉 Bitcoin rate updated successfully!")
+                } else {
+                    print("BitcoinRateService: ❌ Failed to parse Bitcoin rate from JSON")
+                    print("BitcoinRateService: JSON structure: \(String(describing: json))")
+                    self?.handleError("Failed to parse Bitcoin rate")
+                }
+            } catch {
+                print("BitcoinRateService: ❌ JSON parsing error: \(error.localizedDescription)")
+                self?.handleError("JSON parsing error: \(error.localizedDescription)")
+            }
+        }.resume()
+    }
+    
+    private func handleError(_ message: String) {
+        print("BitcoinRateService: 🔄 Handling error: \(message)")
+        DispatchQueue.main.async {
+            self.lastError = message
+            self.isLoading = false
+        }
+        
+        // Try to load cached rate if available
+        if currentRate == 0.0 {
+            loadCachedRate()
+        }
+    }
     
     private func cacheRate(_ rate: Double) {
-        let cacheData = CachedRate(rate: rate, timestamp: Date())
+        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let cacheFilePath = documentsPath.appendingPathComponent("bitcoin_rate_cache.json")
+        
+        let cacheData = [
+            "rate": rate,
+            "timestamp": Date().timeIntervalSince1970
+        ]
         
         do {
-            let data = try JSONEncoder().encode(cacheData)
-            let url = getCacheURL()
-            try data.write(to: url)
-            print("BitcoinRateService: Cached rate to disk: $\(String(format: "%.2f", rate))")
+            let jsonData = try JSONSerialization.data(withJSONObject: cacheData, options: [])
+            try jsonData.write(to: cacheFilePath)
+            print("BitcoinRateService: 💾 Rate cached successfully: $\(rate)")
         } catch {
-            print("BitcoinRateService: Failed to cache rate - Error: \(error)")
+            print("BitcoinRateService: ❌ Failed to cache rate: \(error.localizedDescription)")
         }
     }
     
-    private func loadCachedRate() -> Double? {
+    private func loadCachedRate() {
+        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let cacheFilePath = documentsPath.appendingPathComponent("bitcoin_rate_cache.json")
+        
+        guard FileManager.default.fileExists(atPath: cacheFilePath.path) else {
+            print("BitcoinRateService: 📝 No cached rate found")
+            return
+        }
+        
         do {
-            let url = getCacheURL()
-            let data = try Data(contentsOf: url)
-            let cachedRate = try JSONDecoder().decode(CachedRate.self, from: data)
+            let jsonData = try Data(contentsOf: cacheFilePath)
+            let cacheData = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
             
-            // Check if cache is not older than 1 hour
-            let oneHourAgo = Date().addingTimeInterval(-3600)
-            if cachedRate.timestamp > oneHourAgo {
-                print("BitcoinRateService: Loaded cached rate: $\(String(format: "%.2f", cachedRate.rate))")
-                return cachedRate.rate
+            guard let rate = cacheData?["rate"] as? Double,
+                  let timestamp = cacheData?["timestamp"] as? TimeInterval else {
+                print("BitcoinRateService: ❌ Invalid cached data format")
+                return
+            }
+            
+            let cacheAge = Date().timeIntervalSince1970 - timestamp
+            
+            if cacheAge < cacheExpirationInterval {
+                DispatchQueue.main.async {
+                    self.currentRate = rate
+                }
+                print("BitcoinRateService: 📱 Loaded cached rate: $\(rate) (age: \(Int(cacheAge))s)")
             } else {
-                print("BitcoinRateService: Cached rate is too old, ignoring")
-                return nil
+                print("BitcoinRateService: ⏰ Cached rate expired (age: \(Int(cacheAge))s)")
             }
         } catch {
-            print("BitcoinRateService: Failed to load cached rate - Error: \(error)")
-            return nil
-        }
-    }
-    
-    private func getCacheURL() -> URL {
-        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        return documentsPath.appendingPathComponent("bitcoin_rate_cache.json")
-    }
-}
-
-// MARK: - Data Models
-
-struct CoinCapResponse: Codable {
-    let data: BitcoinData
-}
-
-struct BitcoinData: Codable {
-    let id: String
-    let rank: String
-    let symbol: String
-    let name: String
-    let supply: String?
-    let maxSupply: String?
-    let marketCapUsd: String?
-    let volumeUsd24Hr: String?
-    let priceUsd: String?
-    let changePercent24Hr: String?
-    let vwap24Hr: String?
-}
-
-struct CachedRate: Codable {
-    let rate: Double
-    let timestamp: Date
-}
-
-// MARK: - Errors
-
-enum BitcoinRateError: Error, LocalizedError {
-    case invalidURL
-    case invalidResponse
-    case networkError(Error)
-    
-    var errorDescription: String? {
-        switch self {
-        case .invalidURL:
-            return "Invalid API URL"
-        case .invalidResponse:
-            return "Invalid API response"
-        case .networkError(let error):
-            return "Network error: \(error.localizedDescription)"
+            print("BitcoinRateService: ❌ Failed to load cached rate: \(error.localizedDescription)")
         }
     }
 }

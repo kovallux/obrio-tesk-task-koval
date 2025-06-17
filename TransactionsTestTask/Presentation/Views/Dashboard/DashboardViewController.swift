@@ -110,11 +110,18 @@ class DashboardViewController: UIViewController {
         title = "Expense Tracker"
         view.backgroundColor = .systemBackground
         
-        // Add navigation bar button
+        // Add navigation bar buttons
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .add,
             target: self,
             action: #selector(addTransactionTapped)
+        )
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "chart.bar.fill"),
+            style: .plain,
+            target: self,
+            action: #selector(showStatistics)
         )
         
         // Add subviews
@@ -257,6 +264,17 @@ class DashboardViewController: UIViewController {
     
     @objc private func refreshData() {
         viewModel.refresh()
+    }
+    
+    @objc private func showStatistics() {
+        // Statistics feature not implemented yet
+        let alert = UIAlertController(
+            title: "Statistics",
+            message: "Statistics feature will be implemented in the next phase",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
     
     private func showErrorAlert(message: String) {

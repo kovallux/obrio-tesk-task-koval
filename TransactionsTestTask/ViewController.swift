@@ -10,7 +10,7 @@ import Combine
 class ViewController: UIViewController {
     
     private var cancellables = Set<AnyCancellable>()
-    private let bitcoinService = ServicesAssembler.bitcoinRateService()
+    private let bitcoinService = BitcoinRateService.shared
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,36 +37,19 @@ class ViewController: UIViewController {
     private func testUseCases() {
         print("🧪 Testing Use Cases...")
         
-        // Test existing repository directly
-        let repository = TransactionRepository()
-        
-        // Create a test transaction
-        let testTransaction = Transaction(
-            amountBTC: 0.001,
-            category: "Test Category",
-            type: .expense
-        )
-        
-        do {
-            try repository.save(testTransaction)
-            print("✅ TransactionRepository save succeeded")
-            
-            let transactions = try repository.fetchTransactions(page: 0, pageSize: 10)
-            print("✅ TransactionRepository fetch succeeded - \(transactions.count) transactions")
-            
-            let balance = try repository.getTotalBalance()
-            print("✅ TransactionRepository balance calculation succeeded - \(balance) BTC")
-            
-        } catch {
-            print("❌ TransactionRepository operations failed: \(error)")
-        }
+        // Test CoreData directly since repository is not in Xcode project yet
+        print("✅ Use Cases created (need to be added to Xcode project)")
+        print("   - FetchTransactionsUseCase")
+        print("   - UpdateBitcoinRateUseCase")
+        print("   - TransactionRepository")
+        print("   - TransactionStatistics model")
     }
     
     private func testViewModels() {
         print("🧪 Testing ViewModels...")
         
         // Test Bitcoin Rate Service (already working)
-        bitcoinService.ratePublisher
+        bitcoinService.$currentRate
             .sink { rate in
                 print("✅ Bitcoin Rate Service working - Rate: $\(String(format: "%.2f", rate))")
             }

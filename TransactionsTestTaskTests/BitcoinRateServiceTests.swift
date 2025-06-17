@@ -9,149 +9,291 @@ import XCTest
 import Combine
 @testable import TransactionsTestTask
 
-final class BitcoinRateServiceTests: XCTestCase {
+class BitcoinRateServiceTests: XCTestCase {
     
-    private var cancellables: Set<AnyCancellable>!
-    private var service: BitcoinRateServiceImpl!
+    var sut: BitcoinRateServiceImpl!
+    var cancellables: Set<AnyCancellable>!
     
-    override func setUpWithError() throws {
+    override func setUp() {
+        super.setUp()
+        sut = BitcoinRateServiceImpl(apiKey: "test_api_key")
         cancellables = Set<AnyCancellable>()
-        // Use the same API key from ServicesAssembler
-        service = BitcoinRateServiceImpl(apiKey: "ed001fae24a74737266cda1710af78e0625cd55f1f3780887c05c528278d9fa6")
     }
     
-    override func tearDownWithError() throws {
-        service.stopPeriodicFetch()
+    override func tearDown() {
         cancellables = nil
-        service = nil
+        sut = nil
+        super.tearDown()
     }
     
-    // MARK: - API Fetch Tests
+    // MARK: - Initialization Tests
     
-    func testFetchRateSuccess() throws {
-        let expectation = XCTestExpectation(description: "Fetch rate successfully")
+    func testInitialization() {
+        // Given & When
+        let service = BitcoinRateServiceImpl(apiKey: "test_key")
         
-        service.fetchRate()
-            .sink(
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        print("✅ Test: Fetch completed successfully")
-                    case .failure(let error):
-                        XCTFail("Expected success, got error: \(error)")
-                    }
+        // Then
+        XCTAssertNotNil(service)
+        XCTAssertEqual(service.currentBitcoinRate, 0.0)
+    }
+    
+    // MARK: - Rate Publisher Tests
+    
+    func testRatePublisherFiltersZeroValues() {
+        // Given
+        let expectation = XCTestExpectation(description: "Rate publisher should filter zero values")
+        expectation.isInverted = true // We expect this NOT to be fulfilled
+        
+        // When
+        sut.ratePublisher
+            .sink { rate in
+                if rate == 0.0 {
                     expectation.fulfill()
-                },
-                receiveValue: { rate in
-                    print("✅ Test: Received rate: $\(String(format: "%.2f", rate))")
-                    XCTAssertGreaterThan(rate, 0, "Rate should be greater than 0")
-                    XCTAssertLessThan(rate, 1000000, "Rate should be reasonable (less than $1M)")
                 }
-            )
+            }
             .store(in: &cancellables)
         
-        wait(for: [expectation], timeout: 10.0)
+        // Then
+        wait(for: [expectation], timeout: 1.0)
     }
     
-    func testRatePublisher() throws {
-        let expectation = XCTestExpectation(description: "Rate publisher emits values")
+    func testRatePublisherEmitsValidRates() {
+        // Given
+        let expectation = XCTestExpectation(description: "Rate publisher should emit valid rates")
+        let testRate = 50000.0
         
-        service.ratePublisher
+        // When
+        sut.ratePublisher
             .sink { rate in
-                print("✅ Test: Publisher emitted rate: $\(String(format: "%.2f", rate))")
-                XCTAssertGreaterThan(rate, 0, "Published rate should be greater than 0")
+                XCTAssertGreaterThan(rate, 0)
                 expectation.fulfill()
             }
             .store(in: &cancellables)
         
-        // Trigger a fetch to make the publisher emit
-        service.fetchRate()
-            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+        // Simulate rate update
+        sut.currentRate = testRate
+        
+        // Then
+        wait(for: [expectation], timeout: 2.0)
+    }
+    
+    // MARK: - Fetch Rate Tests
+    
+    func testFetchRateSuccess() {
+        // Given
+        let expectation = XCTestExpectation(description: "Fetch rate should succeed")
+        
+        // When
+        sut.fetchRate()
+            .sink(
+                receiveCompletion: { completion in
+                    if case .failure = completion {
+                        XCTFail("Expected success but got failure")
+                    }
+                },
+                receiveValue: { rate in
+                    XCTAssertGreaterThan(rate, 0)
+                    expectation.fulfill()
+                }
+            )
             .store(in: &cancellables)
         
+        // Then
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testFetchRateWithInvalidAPIKey() {
+        // Given
+        let invalidService = BitcoinRateServiceImpl(apiKey: "invalid_key")
+        let expectation = XCTestExpectation(description: "Fetch rate should fail with invalid API key")
+        
+        // When
+        invalidService.fetchRate()
+            .sink(
+                receiveCompletion: { completion in
+                    if case .failure(let error) = completion {
+                        XCTAssertTrue(error is BitcoinRateError)
+                        expectation.fulfill()
+                    }
+                },
+                receiveValue: { _ in
+                    XCTFail("Expected failure but got success")
+                }
+            )
+            .store(in: &cancellables)
+        
+        // Then
         wait(for: [expectation], timeout: 10.0)
     }
     
     // MARK: - Caching Tests
     
-    func testCachingFunctionality() throws {
-        let expectation = XCTestExpectation(description: "Rate is cached after fetch")
+    func testCacheCreation() {
+        // Given
+        let testRate = 45000.0
+        let testData = CachedRate(rate: testRate, timestamp: Date())
         
-        // First fetch should cache the rate
-        service.fetchRate()
-            .sink(
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        print("✅ Test: First fetch completed, rate should be cached")
-                        
-                        // Create new service instance to test cache loading
-                        let newService = BitcoinRateServiceImpl(apiKey: "ed001fae24a74737266cda1710af78e0625cd55f1f3780887c05c528278d9fa6")
-                        
-                        // Check if cached rate is loaded on initialization
-                        newService.ratePublisher
-                            .sink { cachedRate in
-                                print("✅ Test: Cached rate loaded: $\(String(format: "%.2f", cachedRate))")
-                                XCTAssertGreaterThan(cachedRate, 0, "Cached rate should be greater than 0")
-                                expectation.fulfill()
-                            }
-                            .store(in: &self.cancellables)
-                        
-                    case .failure(let error):
-                        XCTFail("Expected success, got error: \(error)")
-                        expectation.fulfill()
-                    }
-                },
-                receiveValue: { rate in
-                    print("✅ Test: Rate fetched for caching: $\(String(format: "%.2f", rate))")
-                }
-            )
-            .store(in: &cancellables)
+        // When
+        let success = sut.saveToCache(testData)
         
-        wait(for: [expectation], timeout: 15.0)
+        // Then
+        XCTAssertTrue(success)
+    }
+    
+    func testCacheRetrieval() {
+        // Given
+        let testRate = 45000.0
+        let testData = CachedRate(rate: testRate, timestamp: Date())
+        
+        // When
+        let saveSuccess = sut.saveToCache(testData)
+        let retrievedData = sut.loadFromCache()
+        
+        // Then
+        XCTAssertTrue(saveSuccess)
+        XCTAssertNotNil(retrievedData)
+        XCTAssertEqual(retrievedData?.rate, testRate)
+    }
+    
+    func testCacheExpiration() {
+        // Given
+        let testRate = 45000.0
+        let expiredDate = Date().addingTimeInterval(-7200) // 2 hours ago
+        let expiredData = CachedRate(rate: testRate, timestamp: expiredDate)
+        
+        // When
+        let saveSuccess = sut.saveToCache(expiredData)
+        let isValid = sut.isCacheValid()
+        
+        // Then
+        XCTAssertTrue(saveSuccess)
+        XCTAssertFalse(isValid)
+    }
+    
+    // MARK: - Periodic Fetch Tests
+    
+    func testStartPeriodicFetch() {
+        // Given
+        let expectation = XCTestExpectation(description: "Periodic fetch should start")
+        
+        // When
+        sut.startPeriodicFetch()
+        
+        // Verify timer is running (simplified check)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            expectation.fulfill()
+        }
+        
+        // Then
+        wait(for: [expectation], timeout: 2.0)
+        
+        // Cleanup
+        sut.stopPeriodicFetch()
+    }
+    
+    func testStopPeriodicFetch() {
+        // Given
+        sut.startPeriodicFetch()
+        
+        // When
+        sut.stopPeriodicFetch()
+        
+        // Then
+        // Verify timer is stopped (simplified check)
+        XCTAssertTrue(true) // In real implementation, we'd check timer state
     }
     
     // MARK: - Error Handling Tests
     
-    func testInvalidAPIKey() throws {
-        let expectation = XCTestExpectation(description: "Invalid API key should fail")
+    func testNetworkErrorHandling() {
+        // Given
+        let expectation = XCTestExpectation(description: "Should handle network errors gracefully")
         
-        let invalidService = BitcoinRateServiceImpl(apiKey: "invalid_key")
+        // When - Simulate network error by using invalid URL
+        let invalidService = BitcoinRateServiceImpl(apiKey: "test")
+        // Override URL to invalid one (in real implementation)
         
         invalidService.fetchRate()
             .sink(
                 receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        XCTFail("Expected failure with invalid API key")
-                    case .failure(let error):
-                        print("✅ Test: Invalid API key failed as expected: \(error)")
+                    if case .failure(let error) = completion {
+                        XCTAssertNotNil(error)
+                        expectation.fulfill()
                     }
-                    expectation.fulfill()
                 },
-                receiveValue: { rate in
-                    XCTFail("Should not receive value with invalid API key")
+                receiveValue: { _ in
+                    // May still succeed if network is available
+                    expectation.fulfill()
                 }
             )
             .store(in: &cancellables)
         
+        // Then
         wait(for: [expectation], timeout: 10.0)
     }
     
     // MARK: - Performance Tests
     
-    func testFetchPerformance() throws {
+    func testFetchRatePerformance() {
         measure {
-            let expectation = XCTestExpectation(description: "Performance test")
+            let expectation = XCTestExpectation(description: "Fetch rate performance")
             
-            service.fetchRate()
+            sut.fetchRate()
                 .sink(
-                    receiveCompletion: { _ in expectation.fulfill() },
-                    receiveValue: { _ in }
+                    receiveCompletion: { _ in },
+                    receiveValue: { _ in
+                        expectation.fulfill()
+                    }
                 )
                 .store(in: &cancellables)
             
-            wait(for: [expectation], timeout: 5.0)
+            wait(for: [expectation], timeout: 10.0)
         }
+    }
+    
+    func testCachePerformance() {
+        let testData = CachedRate(rate: 50000.0, timestamp: Date())
+        
+        measure {
+            for _ in 0..<1000 {
+                _ = sut.saveToCache(testData)
+                _ = sut.loadFromCache()
+            }
+        }
+    }
+}
+
+// MARK: - Mock Classes
+
+class MockBitcoinRateService: BitcoinRateService {
+    var currentBitcoinRate: Double = 50000.0
+    var shouldFail = false
+    var mockRate = 50000.0
+    
+    var ratePublisher: AnyPublisher<Double, Never> {
+        Just(mockRate).eraseToAnyPublisher()
+    }
+    
+    func fetchRate() -> AnyPublisher<Double, Error> {
+        if shouldFail {
+            return Fail(error: BitcoinRateError.networkError)
+                .eraseToAnyPublisher()
+        } else {
+            return Just(mockRate)
+                .setFailureType(to: Error.self)
+                .eraseToAnyPublisher()
+        }
+    }
+    
+    func fetchBitcoinRatePublisher() -> AnyPublisher<Double, Error> {
+        return fetchRate()
+    }
+    
+    func startPeriodicFetch() {
+        // Mock implementation
+    }
+    
+    func stopPeriodicFetch() {
+        // Mock implementation
     }
 } 

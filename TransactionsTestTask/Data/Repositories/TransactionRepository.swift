@@ -10,106 +10,59 @@ import CoreData
 
 protocol TransactionRepositoryProtocol {
     func save(_ transaction: Transaction) throws
-    func fetchTransactions(page: Int, pageSize: Int) throws -> [Transaction]
-    func fetchAllTransactions() throws -> [Transaction]
-    func fetchTransactionsGroupedByDay() throws -> [String: [Transaction]]
+    func fetchAll() throws -> [Transaction]
+    func fetchPaginated(page: Int, pageSize: Int) throws -> [Transaction]
+    func delete(_ transaction: Transaction) throws
     func getTotalBalance() throws -> Double
 }
 
-final class TransactionRepository: TransactionRepositoryProtocol {
-    
-    private let coreDataStack: CoreDataStack
-    
-    // MARK: - Init
-    
-    init(coreDataStack: CoreDataStack = CoreDataStack.shared) {
-        self.coreDataStack = coreDataStack
-    }
-    
-    // MARK: - Save Transaction
+class TransactionRepository: TransactionRepositoryProtocol {
+    private let context = CoreDataStack.shared.context
     
     func save(_ transaction: Transaction) throws {
-        let context = coreDataStack.context
+        let entity = TransactionEntity(context: context)
+        entity.id = transaction.id
+        entity.amountBTC = transaction.amountBTC
+        entity.category = transaction.category
+        entity.timestamp = transaction.timestamp
+        entity.type = transaction.type.rawValue
         
-        // Create new TransactionEntity
-        let _ = transaction.toEntity(context: context)
-        
-        // Save context
-        do {
-            try context.save()
-            print("TransactionRepository: Successfully saved transaction - ID: \(transaction.id), Amount: \(transaction.amountBTC) BTC")
-        } catch {
-            print("TransactionRepository: Failed to save transaction - Error: \(error)")
-            throw error
-        }
+        try context.save()
     }
     
-    // MARK: - Fetch Transactions Paginated
-    
-    func fetchTransactions(page: Int, pageSize: Int) throws -> [Transaction] {
-        let context = coreDataStack.context
+    func fetchAll() throws -> [Transaction] {
         let request: NSFetchRequest<TransactionEntity> = TransactionEntity.fetchRequest()
-        
-        // Sort by timestamp descending (newest first)
         request.sortDescriptors = [NSSortDescriptor(key: "timestamp", ascending: false)]
         
-        // Set pagination
+        let entities = try context.fetch(request)
+        return entities.map { Transaction(from: $0) }
+    }
+    
+    func fetchPaginated(page: Int, pageSize: Int) throws -> [Transaction] {
+        let request: NSFetchRequest<TransactionEntity> = TransactionEntity.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: "timestamp", ascending: false)]
         request.fetchLimit = pageSize
         request.fetchOffset = page * pageSize
         
-        do {
-            let entities = try context.fetch(request)
-            let transactions = entities.map { Transaction(from: $0) }
-            
-            print("TransactionRepository: Fetched \(transactions.count) transactions for page \(page)")
-            return transactions
-        } catch {
-            print("TransactionRepository: Failed to fetch transactions - Error: \(error)")
-            throw error
-        }
+        let entities = try context.fetch(request)
+        return entities.map { Transaction(from: $0) }
     }
     
-    // MARK: - Fetch All Transactions
-    
-    func fetchAllTransactions() throws -> [Transaction] {
-        let context = coreDataStack.context
+    func delete(_ transaction: Transaction) throws {
         let request: NSFetchRequest<TransactionEntity> = TransactionEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", transaction.id as CVarArg)
         
-        // Sort by timestamp descending (newest first)
-        request.sortDescriptors = [NSSortDescriptor(key: "timestamp", ascending: false)]
-        
-        do {
-            let entities = try context.fetch(request)
-            let transactions = entities.map { Transaction(from: $0) }
-            
-            print("TransactionRepository: Fetched \(transactions.count) total transactions")
-            return transactions
-        } catch {
-            print("TransactionRepository: Failed to fetch all transactions - Error: \(error)")
-            throw error
-        }
-    }
-}
-
-// MARK: - Helper Methods
-
-extension TransactionRepository {
-    
-    func fetchTransactionsGroupedByDay() throws -> [String: [Transaction]] {
-        let transactions = try fetchAllTransactions()
-        
-        let grouped = Dictionary(grouping: transactions) { transaction in
-            transaction.dayKey
+        let entities = try context.fetch(request)
+        for entity in entities {
+            context.delete(entity)
         }
         
-        print("TransactionRepository: Grouped transactions into \(grouped.keys.count) days")
-        return grouped
+        try context.save()
     }
     
     func getTotalBalance() throws -> Double {
-        let transactions = try fetchAllTransactions()
-        
-        let balance = transactions.reduce(0.0) { result, transaction in
+        let transactions = try fetchAll()
+        return transactions.reduce(0) { result, transaction in
             switch transaction.type {
             case .income:
                 return result + transaction.amountBTC
@@ -117,8 +70,5 @@ extension TransactionRepository {
                 return result - transaction.amountBTC
             }
         }
-        
-        print("TransactionRepository: Calculated total balance: \(balance) BTC")
-        return balance
     }
 } 

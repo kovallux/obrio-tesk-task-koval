@@ -166,7 +166,7 @@ class BalanceChartView: UIView {
         }
         
         // Close gradient path
-        if let lastPoint = dataPoints.last {
+        if let _ = dataPoints.last {
             let lastX = chartBounds.minX + CGFloat(dataPoints.count - 1) / CGFloat(dataPoints.count - 1) * chartBounds.width
             gradientPath.addLine(to: CGPoint(x: lastX, y: chartBounds.maxY))
         }

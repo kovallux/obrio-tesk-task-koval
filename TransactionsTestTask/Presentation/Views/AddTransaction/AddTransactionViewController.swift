@@ -436,12 +436,12 @@ class AddTransactionViewController: UIViewController {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
         let keyboardHeight = keyboardFrame.cgRectValue.height
         scrollView.contentInset.bottom = keyboardHeight
-        scrollView.scrollIndicatorInsets.bottom = keyboardHeight
+        scrollView.verticalScrollIndicatorInsets.bottom = keyboardHeight
     }
     
     @objc private func keyboardWillHide(notification: NSNotification) {
         scrollView.contentInset.bottom = 0
-        scrollView.scrollIndicatorInsets.bottom = 0
+        scrollView.verticalScrollIndicatorInsets.bottom = 0
     }
     
     // MARK: - Helper Methods

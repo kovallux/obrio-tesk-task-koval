@@ -62,6 +62,7 @@ class AddTransactionViewModel: ObservableObject {
             .assign(to: &$category)
     }
     
+    @discardableResult
     func addTransaction() -> AnyPublisher<Void, Error> {
         guard isValid else {
             return Fail(error: NSError(domain: "ValidationError", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid input"]))

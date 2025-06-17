@@ -80,10 +80,14 @@ extension Transaction {
     }
     
     var dayKey: String {
+        return Transaction.dayKeyFormatter.string(from: timestamp)
+    }
+    
+    static let dayKeyFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.string(from: timestamp)
-    }
+        return formatter
+    }()
 }
 
 // MARK: - Identifiable
@@ -102,6 +106,7 @@ extension Transaction: Equatable {
 
 // MARK: - CoreData Conversion
 
+
 extension Transaction {
     
     init(from entity: TransactionEntity) {
@@ -113,13 +118,12 @@ extension Transaction {
     }
     
     func toEntity(context: NSManagedObjectContext) -> TransactionEntity {
-        return TransactionEntity(
-            context: context,
-            id: id,
-            amountBTC: amountBTC,
-            category: category,
-            timestamp: timestamp,
-            type: type.rawValue
-        )
+        let entity = TransactionEntity(context: context)
+        entity.id = id
+        entity.amountBTC = amountBTC
+        entity.category = category
+        entity.timestamp = timestamp
+        entity.type = type.rawValue
+        return entity
     }
-} 
+}

@@ -267,14 +267,16 @@ class DashboardViewController: UIViewController {
     }
     
     @objc private func showStatistics() {
-        // Statistics feature not implemented yet
-        let alert = UIAlertController(
-            title: "Statistics",
-            message: "Statistics feature will be implemented in the next phase",
-            preferredStyle: .alert
+        let statisticsVC = StatisticsViewController()
+        let navController = UINavigationController(rootViewController: statisticsVC)
+        
+        statisticsVC.navigationItem.leftBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .close,
+            target: statisticsVC,
+            action: #selector(StatisticsViewController.dismissViewController)
         )
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+        
+        present(navController, animated: true)
     }
     
     private func showErrorAlert(message: String) {

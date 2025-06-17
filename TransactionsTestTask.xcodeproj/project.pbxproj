@@ -22,6 +22,8 @@
 		6DBD29312E001A94007295D2 /* TransactionEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD292F2E001A94007295D2 /* TransactionEntity+CoreDataClass.swift */; };
 		6DBD29352E001AAE007295D2 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD29342E001AAE007295D2 /* Transaction.swift */; };
 		6DBD29362E001AAE007295D2 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD29342E001AAE007295D2 /* Transaction.swift */; };
+		6DBD29372E001AAF007295D2 /* TransactionStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD29382E001AAF007295D2 /* TransactionStatistics.swift */; };
+		6DBD29392E001AAF007295D2 /* TransactionStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD29382E001AAF007295D2 /* TransactionStatistics.swift */; };
 		6DBD29572E008D64007295D2 /* AddTransactionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD294B2E008D64007295D2 /* AddTransactionViewModel.swift */; };
 		6DBD29582E008D64007295D2 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD294C2E008D64007295D2 /* DashboardViewModel.swift */; };
 		6DBD29592E008D64007295D2 /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD294F2E008D64007295D2 /* DashboardViewController.swift */; };
@@ -30,6 +32,11 @@
 		6DBD295C2E008D64007295D2 /* LoadMoreTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD29532E008D64007295D2 /* LoadMoreTableViewCell.swift */; };
 		6DBD295D2E008D64007295D2 /* TransactionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD29542E008D64007295D2 /* TransactionTableViewCell.swift */; };
 		6DBD295E2E008D64007295D2 /* AddTransactionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD29562E008D64007295D2 /* AddTransactionViewController.swift */; };
+		6DBD297A2E017D2A007295D2 /* StatisticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD29792E017D2A007295D2 /* StatisticsViewModel.swift */; };
+		6DBD29802E017D57007295D2 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD297C2E017D57007295D2 /* StatisticsViewController.swift */; };
+		6DBD29812E017D57007295D2 /* StatisticsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD297D2E017D57007295D2 /* StatisticsHeaderView.swift */; };
+		6DBD29822E017D57007295D2 /* CategoryBreakdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD297E2E017D57007295D2 /* CategoryBreakdownView.swift */; };
+		6DBD29832E017D57007295D2 /* BalanceChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD297F2E017D57007295D2 /* BalanceChartView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +73,7 @@
 		6DBD291D2E0012C9007295D2 /* CoreDataStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		6DBD292F2E001A94007295D2 /* TransactionEntity+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TransactionEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
 		6DBD29342E001AAE007295D2 /* Transaction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
+		6DBD29382E001AAF007295D2 /* TransactionStatistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionStatistics.swift; sourceTree = "<group>"; };
 		6DBD294B2E008D64007295D2 /* AddTransactionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddTransactionViewModel.swift; sourceTree = "<group>"; };
 		6DBD294C2E008D64007295D2 /* DashboardViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		6DBD294F2E008D64007295D2 /* DashboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
@@ -74,6 +82,11 @@
 		6DBD29532E008D64007295D2 /* LoadMoreTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadMoreTableViewCell.swift; sourceTree = "<group>"; };
 		6DBD29542E008D64007295D2 /* TransactionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionTableViewCell.swift; sourceTree = "<group>"; };
 		6DBD29562E008D64007295D2 /* AddTransactionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddTransactionViewController.swift; sourceTree = "<group>"; };
+		6DBD29792E017D2A007295D2 /* StatisticsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsViewModel.swift; sourceTree = "<group>"; };
+		6DBD297C2E017D57007295D2 /* StatisticsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
+		6DBD297D2E017D57007295D2 /* StatisticsHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsHeaderView.swift; sourceTree = "<group>"; };
+		6DBD297E2E017D57007295D2 /* CategoryBreakdownView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryBreakdownView.swift; sourceTree = "<group>"; };
+		6DBD297F2E017D57007295D2 /* BalanceChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BalanceChartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -184,6 +197,7 @@
 			isa = PBXGroup;
 			children = (
 				6DBD29342E001AAE007295D2 /* Transaction.swift */,
+				6DBD29382E001AAF007295D2 /* TransactionStatistics.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -200,6 +214,7 @@
 		6DBD294A2E008D64007295D2 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				6DBD29792E017D2A007295D2 /* StatisticsViewModel.swift */,
 				6DBD294B2E008D64007295D2 /* AddTransactionViewModel.swift */,
 				6DBD294C2E008D64007295D2 /* DashboardViewModel.swift */,
 			);
@@ -209,6 +224,7 @@
 		6DBD294D2E008D64007295D2 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				6DBD297B2E017D57007295D2 /* Statistics */,
 				6DBD294E2E008D64007295D2 /* Dashboard */,
 				6DBD29522E008D64007295D2 /* Common */,
 				6DBD29552E008D64007295D2 /* AddTransaction */,
@@ -241,6 +257,17 @@
 				6DBD29562E008D64007295D2 /* AddTransactionViewController.swift */,
 			);
 			path = AddTransaction;
+			sourceTree = "<group>";
+		};
+		6DBD297B2E017D57007295D2 /* Statistics */ = {
+			isa = PBXGroup;
+			children = (
+				6DBD297C2E017D57007295D2 /* StatisticsViewController.swift */,
+				6DBD297D2E017D57007295D2 /* StatisticsHeaderView.swift */,
+				6DBD297E2E017D57007295D2 /* CategoryBreakdownView.swift */,
+				6DBD297F2E017D57007295D2 /* BalanceChartView.swift */,
+			);
+			path = Statistics;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -375,12 +402,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				6DBD29582E008D64007295D2 /* DashboardViewModel.swift in Sources */,
+				6DBD29812E017D57007295D2 /* StatisticsHeaderView.swift in Sources */,
 				6DBD295E2E008D64007295D2 /* AddTransactionViewController.swift in Sources */,
 				6DBD295B2E008D64007295D2 /* TransactionListView.swift in Sources */,
 				6DBD29592E008D64007295D2 /* DashboardViewController.swift in Sources */,
 				6DBD295A2E008D64007295D2 /* DashboardHeaderView.swift in Sources */,
 				0DF1D1452D22DD06001626E7 /* BitcoinRateService.swift in Sources */,
 				6DBD29352E001AAE007295D2 /* Transaction.swift in Sources */,
+				6DBD29372E001AAF007295D2 /* TransactionStatistics.swift in Sources */,
+				6DBD297A2E017D2A007295D2 /* StatisticsViewModel.swift in Sources */,
 				6DBD295D2E008D64007295D2 /* TransactionTableViewCell.swift in Sources */,
 				6DBD29302E001A94007295D2 /* TransactionEntity+CoreDataClass.swift in Sources */,
 				1CA3B65A2D22B0F500176711 /* ViewController.swift in Sources */,
@@ -388,6 +418,9 @@
 				1CA3B6562D22B0F500176711 /* AppDelegate.swift in Sources */,
 				1CA3B6582D22B0F500176711 /* SceneDelegate.swift in Sources */,
 				6DBD29572E008D64007295D2 /* AddTransactionViewModel.swift in Sources */,
+				6DBD29822E017D57007295D2 /* CategoryBreakdownView.swift in Sources */,
+				6DBD29802E017D57007295D2 /* StatisticsViewController.swift in Sources */,
+				6DBD29832E017D57007295D2 /* BalanceChartView.swift in Sources */,
 				6DBD295C2E008D64007295D2 /* LoadMoreTableViewCell.swift in Sources */,
 				1CA3B6602D22B0F500176711 /* TransactionsTestTask.xcdatamodeld in Sources */,
 			);
@@ -400,6 +433,7 @@
 				1CA3B6702D22B0F600176711 /* TransactionsTestTaskTests.swift in Sources */,
 				6DBD29312E001A94007295D2 /* TransactionEntity+CoreDataClass.swift in Sources */,
 				6DBD29362E001AAE007295D2 /* Transaction.swift in Sources */,
+				6DBD29392E001AAF007295D2 /* TransactionStatistics.swift in Sources */,
 				6DBD292E2E0018DA007295D2 /* CoreDataStack.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

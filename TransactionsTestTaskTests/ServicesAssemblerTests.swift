@@ -66,4 +66,43 @@ final class ServicesAssemblerTests: XCTestCase {
         // Then
         XCTAssertTrue(hasStaticBitcoinRateServiceMethod)
     }
+    
+    // MARK: - Fan-out Logging Tests
+    
+    func testServicesAssemblerSingleton() {
+        // When
+        let assembler1 = ServicesAssembler.shared
+        let assembler2 = ServicesAssembler.shared
+        
+        // Then
+        XCTAssertTrue(assembler1 === assembler2, "ServicesAssembler should be a singleton")
+    }
+    
+    func testFanOutLoggingSetup() {
+        // Given
+        BitcoinRateLogger.clearLogs()
+        
+        // When
+        let assembler = ServicesAssembler.shared
+        let bitcoinRateService = ServicesAssembler.bitcoinRateService()
+        
+        // Simulate a rate update
+        bitcoinRateService.currentRate = 50000.0
+        
+        // Wait for logging to complete
+        let expectation = XCTestExpectation(description: "Fan-out logging should complete")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 2.0)
+        
+        // Then
+        let logContents = BitcoinRateLogger.getLogContents()
+        XCTAssertNotNil(logContents, "Log file should exist after rate update")
+        
+        if let contents = logContents {
+            XCTAssertTrue(contents.contains("50000.00"), "Log should contain the rate update")
+            XCTAssertTrue(contents.contains("modules"), "Log should mention modules")
+        }
+    }
 } 

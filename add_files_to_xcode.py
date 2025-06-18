@@ -13,6 +13,9 @@ def add_files_to_xcode_project():
     
     # Files to add
     files_to_add = [
+        # Logging
+        "TransactionsTestTask/Core/Logging/BitcoinRateLogger.swift",
+        
         # Use Cases
         "TransactionsTestTask/Domain/UseCases/AddTransactionUseCase.swift",
         "TransactionsTestTask/Domain/UseCases/UpdateBitcoinRateUseCase.swift", 

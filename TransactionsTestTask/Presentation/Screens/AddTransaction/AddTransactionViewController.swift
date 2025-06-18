@@ -363,6 +363,19 @@ class AddTransactionViewController: UIViewController {
                 self?.updateCategorySelection(category)
             }
             .store(in: &cancellables)
+        
+        // Transaction type changes
+        viewModel.$transactionType
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.categoryPickerView.reloadAllComponents()
+                // Reset to first category when type changes
+                if let self = self, !self.viewModel.categories.isEmpty {
+                    self.categoryPickerView.selectRow(0, inComponent: 0, animated: false)
+                    self.viewModel.selectCategory(self.viewModel.categories[0])
+                }
+            }
+            .store(in: &cancellables)
     }
     
     private func setupQuickAmountButtons() {
@@ -409,6 +422,15 @@ class AddTransactionViewController: UIViewController {
         let color: UIColor = isIncome ? .systemGreen : .systemRed
         typeSegmentedControl.selectedSegmentTintColor = color
         addButton.backgroundColor = color
+        
+        // Reload picker view to reflect new categories
+        categoryPickerView.reloadAllComponents()
+        
+        // Reset picker selection to first item to avoid index out of range
+        if !viewModel.categories.isEmpty {
+            categoryPickerView.selectRow(0, inComponent: 0, animated: true)
+            viewModel.selectCategory(viewModel.categories[0])
+        }
     }
     
     @objc private func amountChanged() {
@@ -488,10 +510,18 @@ extension AddTransactionViewController: UIPickerViewDataSource, UIPickerViewDele
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        guard row < viewModel.categories.count else {
+            print("AddTransactionViewController: Warning - picker row \(row) out of range for categories count \(viewModel.categories.count)")
+            return nil
+        }
         return viewModel.categories[row]
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        guard row < viewModel.categories.count else {
+            print("AddTransactionViewController: Warning - picker row \(row) out of range for categories count \(viewModel.categories.count)")
+            return
+        }
         let category = viewModel.categories[row]
         viewModel.selectCategory(category)
     }

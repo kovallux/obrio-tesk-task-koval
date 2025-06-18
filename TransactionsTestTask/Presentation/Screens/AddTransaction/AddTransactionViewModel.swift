@@ -28,8 +28,8 @@ class AddTransactionViewModel: ObservableObject {
     private let context = CoreDataStack.shared.context
     private var cancellables = Set<AnyCancellable>()
     
-    let incomeCategories = ["Salary", "Bonus", "Investment", "Gift", "Other"]
-    let expenseCategories = ["Food", "Transport", "Entertainment", "Shopping", "Bills", "Other"]
+    let incomeCategories = Constants.Categories.incomeCategories
+    let expenseCategories = Constants.Categories.expenseCategories
     
     var categories: [String] {
         return transactionType == .income ? incomeCategories : expenseCategories

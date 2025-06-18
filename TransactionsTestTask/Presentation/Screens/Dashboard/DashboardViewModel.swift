@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import CoreData
 
-class DashboardViewModel: ObservableObject {
+class DashboardViewModel: ViewModelProtocol {
     @Published var transactions: [Transaction] = []
     @Published var currentBitcoinRate: Double = 0.0
     @Published var totalBalance: Double = 0.0

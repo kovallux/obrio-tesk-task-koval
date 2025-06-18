@@ -2,6 +2,7 @@
 //  SceneDelegate.swift
 //  TransactionsTestTask
 //
+//  Created by Sergii Koval on 16.06.2025.
 //
 
 import UIKit
@@ -9,6 +10,7 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    var appCoordinator: AppCoordinator?
 
     func scene(
         _ scene: UIScene,
@@ -22,13 +24,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         
-        // Simple setup without coordinator
-        let dashboardViewModel = DashboardViewModel()
-        let dashboardVC = DashboardViewController(viewModel: dashboardViewModel)
-        let navigationController = UINavigationController(rootViewController: dashboardVC)
+        // Setup with AppCoordinator for better navigation management
+        let navigationController = UINavigationController()
+        appCoordinator = AppCoordinator(navigationController: navigationController)
         
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
+        
+        appCoordinator?.start()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

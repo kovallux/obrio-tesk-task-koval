@@ -13,6 +13,7 @@ class DashboardViewController: UIViewController {
     // MARK: - Properties
     private let viewModel: DashboardViewModel
     private var cancellables = Set<AnyCancellable>()
+    weak var coordinator: AppCoordinator?
     
     // MARK: - UI Components
     private lazy var scrollView: UIScrollView = {
@@ -256,10 +257,7 @@ class DashboardViewController: UIViewController {
     
     // MARK: - Actions
     @objc private func addTransactionTapped() {
-        let addTransactionVC = AddTransactionViewController()
-        addTransactionVC.delegate = self
-        let navController = UINavigationController(rootViewController: addTransactionVC)
-        present(navController, animated: true)
+        coordinator?.showAddTransaction(from: self)
     }
     
     @objc private func refreshData() {
@@ -267,16 +265,7 @@ class DashboardViewController: UIViewController {
     }
     
     @objc private func showStatistics() {
-        let statisticsVC = StatisticsViewController()
-        let navController = UINavigationController(rootViewController: statisticsVC)
-        
-        statisticsVC.navigationItem.leftBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .close,
-            target: statisticsVC,
-            action: #selector(StatisticsViewController.dismissViewController)
-        )
-        
-        present(navController, animated: true)
+        coordinator?.showStatistics(from: self)
     }
     
     private func showErrorAlert(message: String) {

@@ -75,6 +75,7 @@ class AddTransactionViewController: UIViewController {
         textField.font = .systemFont(ofSize: 18, weight: .regular)
         textField.textColor = .label
         textField.addTarget(self, action: #selector(amountChanged), for: .editingChanged)
+        textField.inputAccessoryView = createKeyboardToolbar()
         return textField
     }()
     
@@ -123,6 +124,7 @@ class AddTransactionViewController: UIViewController {
         textField.textColor = .label
         textField.isHidden = true
         textField.addTarget(self, action: #selector(customCategoryChanged), for: .editingChanged)
+        textField.inputAccessoryView = createKeyboardToolbar()
         return textField
     }()
     
@@ -171,6 +173,7 @@ class AddTransactionViewController: UIViewController {
         setupBindings()
         setupQuickAmountButtons()
         setupKeyboardHandling()
+        setupInitialCategorySelection()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -396,6 +399,18 @@ class AddTransactionViewController: UIViewController {
         )
     }
     
+    private func setupInitialCategorySelection() {
+        // Set picker view delegates
+        categoryPickerView.delegate = self
+        categoryPickerView.dataSource = self
+        
+        // Select first category by default
+        if !viewModel.categories.isEmpty {
+            categoryPickerView.selectRow(0, inComponent: 0, animated: false)
+            viewModel.selectCategory(viewModel.categories[0])
+        }
+    }
+    
     // MARK: - Actions
     @objc private func cancelTapped() {
         dismiss(animated: true)
@@ -404,6 +419,15 @@ class AddTransactionViewController: UIViewController {
     @objc private func typeChanged() {
         let isIncome = typeSegmentedControl.selectedSegmentIndex == 0
         viewModel.toggleTransactionType()
+        
+        // Reset picker view to first item when transaction type changes
+        categoryPickerView.selectRow(0, inComponent: 0, animated: false)
+        if !viewModel.categories.isEmpty {
+            viewModel.selectCategory(viewModel.categories[0])
+        }
+        
+        // Reload picker view data to reflect new categories
+        categoryPickerView.reloadAllComponents()
         
         // Update UI colors based on type
         let color: UIColor = isIncome ? .systemGreen : .systemRed
@@ -445,6 +469,30 @@ class AddTransactionViewController: UIViewController {
     }
     
     // MARK: - Helper Methods
+    private func createKeyboardToolbar() -> UIToolbar {
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        
+        let flexSpace = UIBarButtonItem(
+            barButtonSystemItem: .flexibleSpace,
+            target: nil,
+            action: nil
+        )
+        
+        let doneButton = UIBarButtonItem(
+            barButtonSystemItem: .done,
+            target: self,
+            action: #selector(dismissKeyboard)
+        )
+        
+        toolbar.items = [flexSpace, doneButton]
+        return toolbar
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
     private func updateAmountContainerBorder(hasError: Bool) {
         amountContainerView.layer.borderColor = hasError ? UIColor.systemRed.cgColor : UIColor.separator.cgColor
     }
@@ -488,10 +536,12 @@ extension AddTransactionViewController: UIPickerViewDataSource, UIPickerViewDele
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        guard row < viewModel.categories.count else { return nil }
         return viewModel.categories[row]
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        guard row < viewModel.categories.count else { return }
         let category = viewModel.categories[row]
         viewModel.selectCategory(category)
     }

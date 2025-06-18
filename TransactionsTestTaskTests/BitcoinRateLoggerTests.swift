@@ -188,25 +188,6 @@ final class BitcoinRateLoggerTests: XCTestCase {
         }
     }
     
-    // MARK: - Performance Tests
-    
-//    func testLoggingPerformance() {
-//        // Given
-//        let testRate = 50000.0
-//        
-//        // When & Then
-//        measure {
-//            BitcoinRateLogger.log(testRate, subscriberCount: 25)
-//            
-//            // Wait for logging to complete
-//            let expectation = XCTestExpectation(description: "Logging should complete")
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                expectation.fulfill()
-//            }
-//            wait(for: [expectation], timeout: 0.5)
-//        }
-//    }
-    
     // MARK: - Edge Cases
     
     func testZeroRate() {
@@ -246,24 +227,4 @@ final class BitcoinRateLoggerTests: XCTestCase {
         XCTAssertNotNil(logContents, "Log should exist for negative rate")
         XCTAssertTrue(logContents?.contains("-1000.00") == true, "Log should contain negative rate")
     }
-    
-//    func testMaxSubscriberCount() {
-//        // Given
-//        let testRate = 55000.0
-//        let maxSubscribers = 50
-//        let expectation = XCTestExpectation(description: "Max subscribers should be logged")
-//        
-//        // When
-//        BitcoinRateLogger.log(testRate, subscriberCount: maxSubscribers)
-//        
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//            expectation.fulfill()
-//        }
-//        wait(for: [expectation], timeout: 1.0)
-//        
-//        // Then
-//        let logContents = BitcoinRateLogger.getLogContents()
-//        XCTAssertNotNil(logContents, "Log should exist for max subscribers")
-//        XCTAssertTrue(logContents?.contains("\(maxSubscribers) modules") == true, "Log should contain max subscriber count")
-//    }
 } 

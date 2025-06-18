@@ -27,6 +27,13 @@ class AddTransactionViewModel: ObservableObject {
     
     private let context = CoreDataStack.shared.context
     private var cancellables = Set<AnyCancellable>()
+    private let numberFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 8
+        formatter.minimumFractionDigits = 0
+        return formatter
+    }()
     
     let incomeCategories = ["Salary", "Bonus", "Investment", "Gift", "Other"]
     let expenseCategories = ["Food", "Transport", "Entertainment", "Shopping", "Bills", "Other"]
@@ -42,10 +49,11 @@ class AddTransactionViewModel: ObservableObject {
     
     private func setupValidation() {
         Publishers.CombineLatest3($amount, $category, $transactionType)
-            .map { amount, category, _ in
+            .map { [weak self] amount, category, _ in
+                guard let self = self else { return false }
                 return !amount.isEmpty && 
-                       Double(amount) != nil && 
-                       Double(amount)! > 0 && 
+                       self.parseLocalizedAmount(amount) != nil && 
+                       self.parseLocalizedAmount(amount)! > 0 && 
                        !category.isEmpty
             }
             .assign(to: &$isValid)
@@ -69,7 +77,7 @@ class AddTransactionViewModel: ObservableObject {
                 .eraseToAnyPublisher()
         }
         
-        guard let amountValue = Double(amount) else {
+        guard let amountValue = parseLocalizedAmount(amount) else {
             return Fail(error: NSError(domain: "ValidationError", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid amount"]))
                 .eraseToAnyPublisher()
         }
@@ -119,6 +127,19 @@ class AddTransactionViewModel: ObservableObject {
     func selectCategory(_ category: String) {
         selectedCategory = category
         self.category = category
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func parseLocalizedAmount(_ amountString: String) -> Double? {
+        // First try with the number formatter (handles localized input)
+        if let number = numberFormatter.number(from: amountString) {
+            return number.doubleValue
+        }
+        
+        // Fallback: try converting comma to dot and parse
+        let normalizedString = amountString.replacingOccurrences(of: ",", with: ".")
+        return Double(normalizedString)
     }
 }
 

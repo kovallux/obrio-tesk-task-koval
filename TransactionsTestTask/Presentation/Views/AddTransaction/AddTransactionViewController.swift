@@ -70,7 +70,7 @@ class AddTransactionViewController: UIViewController {
     private lazy var amountTextField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.placeholder = "0.00000000"
+        textField.placeholder = localizedDecimalPlaceholder()
         textField.keyboardType = .decimalPad
         textField.font = .systemFont(ofSize: 18, weight: .regular)
         textField.textColor = .label
@@ -491,6 +491,14 @@ class AddTransactionViewController: UIViewController {
     
     @objc private func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    private func localizedDecimalPlaceholder() -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 8
+        formatter.minimumFractionDigits = 8
+        return formatter.string(from: NSNumber(value: 0.00000000)) ?? "0.00000000"
     }
     
     private func updateAmountContainerBorder(hasError: Bool) {

@@ -20,6 +20,7 @@ class DashboardViewController: UIViewController {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.showsVerticalScrollIndicator = true
         scrollView.alwaysBounceVertical = true
+        scrollView.contentInsetAdjustmentBehavior = .automatic
         return scrollView
     }()
     
@@ -61,6 +62,11 @@ class DashboardViewController: UIViewController {
     private lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
         control.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        control.tintColor = .systemBlue
+        control.attributedTitle = NSAttributedString(
+            string: "Pull to refresh",
+            attributes: [.foregroundColor: UIColor.secondaryLabel]
+        )
         return control
     }()
     
@@ -153,6 +159,7 @@ class DashboardViewController: UIViewController {
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor, constant: 1),
             
             // HeaderView
             headerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
@@ -164,7 +171,6 @@ class DashboardViewController: UIViewController {
             transactionListView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             transactionListView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             transactionListView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
-            transactionListView.heightAnchor.constraint(greaterThanOrEqualToConstant: 400),
             
             // Error Label
             errorLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),

@@ -36,7 +36,8 @@ class TransactionListView: UIView {
         tableView.dataSource = self
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
-        tableView.showsVerticalScrollIndicator = true
+        tableView.showsVerticalScrollIndicator = false
+        tableView.isScrollEnabled = false
         tableView.register(TransactionTableViewCell.self, forCellReuseIdentifier: TransactionTableViewCell.identifier)
         tableView.register(LoadMoreTableViewCell.self, forCellReuseIdentifier: LoadMoreTableViewCell.identifier)
         return tableView
@@ -147,6 +148,7 @@ class TransactionListView: UIView {
         DispatchQueue.main.async { [weak self] in
             self?.tableView.reloadData()
             self?.updateEmptyState()
+            self?.updateTableViewHeight()
         }
     }
     
@@ -155,6 +157,7 @@ class TransactionListView: UIView {
         
         DispatchQueue.main.async { [weak self] in
             self?.tableView.reloadData()
+            self?.updateTableViewHeight()
         }
     }
     
@@ -162,6 +165,35 @@ class TransactionListView: UIView {
         let isEmpty = transactions.isEmpty
         emptyStateView.isHidden = !isEmpty
         tableView.isHidden = isEmpty
+    }
+    
+    private func updateTableViewHeight() {
+        // Force layout update to get accurate content size
+        tableView.layoutIfNeeded()
+        
+        // Calculate the height needed for all rows
+        let numberOfRows = tableView.numberOfRows(inSection: 0)
+        var totalHeight: CGFloat = 0
+        
+        for row in 0..<numberOfRows {
+            let indexPath = IndexPath(row: row, section: 0)
+            totalHeight += tableView(tableView, heightForRowAt: indexPath)
+        }
+        
+        // Add some padding for safety
+        totalHeight += 20
+        
+        // Update the table view's height constraint
+        tableView.constraints.forEach { constraint in
+            if constraint.firstAttribute == .height {
+                constraint.isActive = false
+            }
+        }
+        
+        tableView.heightAnchor.constraint(equalToConstant: max(totalHeight, 200)).isActive = true
+        
+        // Force layout update
+        layoutIfNeeded()
     }
 }
 
